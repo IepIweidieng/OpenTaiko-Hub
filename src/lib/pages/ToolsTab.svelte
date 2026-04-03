@@ -7,10 +7,13 @@
 
     // Tools
     import ToolCard from '$lib/components/ToolCard.svelte';
+    import peepoSamyuuScreenshotUrl from '$lib/peepoSamyuu.png';
     import peepoScreenshotUrl from '$lib/peepo.png';
     import arrowScreenshotUrl from '$lib/arrow.png';
-    import tjatoolsScreenshotUrl from '$lib/tjatools.png';
+    import tjatoolsScreenshotUrl from '$lib/tjatools.jpg';
 	import subeditScreenshotUrl from '$lib/subedit.png';
+	import songSubmissionScreenshotUrl from '$lib/songsubmission.png';
+	import songSuggestionScreenshotUrl from '$lib/songsuggestion.png';
 
     let currentTab = 0;
 	let optk_OS = "Win";
@@ -65,15 +68,15 @@
 			<div class="w-full text-token grid grid-cols-2 md:grid-cols-2 gap-4">	
 				<ToolCard 
 					Url="https://drive.google.com/uc?export=download&id=1TQuvKo1tBZrXZIMlUMJ3-1vU1jfsxI2H"
-					ImageSrc={peepoScreenshotUrl}
-					CardSubtitle="Official Latest"
-					CardText ="The official latest version by samyuu, for regular charts without the experimental features."
+					ImageSrc={peepoSamyuuScreenshotUrl}
+					CardSubtitle="Original Latest"
+					CardText ="The original latest version by samyuu, for regular charts without the experimental features."
 				/>
 				<ToolCard 
 					Url="https://github.com/0auBSQ/PeepoDrumKit/releases/latest"
 					ImageSrc={peepoScreenshotUrl}
-					CardSubtitle="Unofficial Latest"
-					CardText ="The unofficial latest version continued by Komi, adding experimental features supported by OpenTaiko."
+					CardSubtitle="OpenTaiko Latest"
+					CardText ="The version continued by Komi, adding experimental features supported by OpenTaiko as well as enhancements for regular editing."
 				/>
 			</div>
 		{/if}
@@ -120,14 +123,14 @@
 		<div class="w-full text-token grid grid-cols-1 md:grid-cols-2 gap-4">
 			<ToolCard 
 				Url="https://forms.gle/WXNUwjJyLdJoeRSM6"
-				ImageSrc={peepoScreenshotUrl}
+				ImageSrc={songSubmissionScreenshotUrl}
 				CardTitle="Song submission form"
 				CardSubtitle="For your songs"
 				CardText ="You can submit your songs here for the OpenTaiko soundtrack! Charts are usually made within 2 weeks if the song is accepted."
 			/>
 			<ToolCard 
 				Url="https://forms.gle/1HbDtS7FtJDNfhUb7"
-				ImageSrc={peepoScreenshotUrl}
+				ImageSrc={songSuggestionScreenshotUrl}
 				CardTitle="Song suggestion form"
 				CardSubtitle="For other artists"
 				CardText ="You can recommand artists here whose songs you think would fit for OpenTaiko!"
