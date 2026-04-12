@@ -29,8 +29,10 @@
 </div>
 
 <style>
+    @reference "../../app.css";
+
     ul {list-style-type: circle;}
-    .content {@apply card w-full bg-surface-100-800-token p-4;}
+    .content {@apply card w-full bg-surface-100-900 p-4;}
     .container {
         display: flex;
         align-items:center;

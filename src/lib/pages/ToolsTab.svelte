@@ -1,7 +1,7 @@
 <script>
     // Dependencies
     import { onMount } from 'svelte';
-    import { TabGroup, Tab } from '@skeletonlabs/skeleton';
+    import { Tabs } from '@skeletonlabs/skeleton-svelte';
     import { GetOS } from '$lib/utils/path.js';
     import { _ } from 'svelte-i18n';
 
@@ -15,8 +15,8 @@
 	import songSubmissionScreenshotUrl from '$lib/songsubmission.png';
 	import songSuggestionScreenshotUrl from '$lib/songsuggestion.png';
 
-    let currentTab = 0;
-	let optk_OS = "Win";
+    let currentTab = $state(0);
+	let optk_OS = $state("Win");
 
 	onMount(async () => {
         optk_OS = await GetOS();
@@ -24,34 +24,34 @@
 
 </script>
 
-<TabGroup
+<Tabs {currentTab} defaultValue={0} onValueChange={(details) => currentTab = details.value}
 	justify="justify-center"
-	active="variant-filled-primary"
-	hover="hover:variant-soft-primary"
+	active="preset-filled-primary-500"
+	hover="hover:preset-tonal-primary"
 	flex="flex-1 lg:flex-none"
 	rounded=""
 	border=""
-	class="bg-surface-100-800-token w-full"
-	>
-	<Tab bind:group={currentTab} name="tab1" value={0}>
-		<svelte:fragment slot="lead"><i class="fa-regular fa-file-audio"></i></svelte:fragment>
+	class="bg-surface-100-900 w-full"
+	><Tabs.List>
+	<Tabs.Trigger class="flex-1" value={0}>
+		<i class="fa-regular fa-file-audio"></i>
 		<span>{$_('tools.tab.charting')}</span>
-	</Tab>
-	<Tab bind:group={currentTab} name="tab2" value={1}>
-		<svelte:fragment slot="lead"><i class="fa-solid fa-music"></i></svelte:fragment>
+	</Tabs.Trigger>
+	<Tabs.Trigger class="flex-1" value={1}>
+		<i class="fa-solid fa-music"></i>
 		<span>{$_('tools.tab.lyrics')}</span>
-	</Tab>
-	<Tab bind:group={currentTab} name="tab3" value={2}>
-		<svelte:fragment slot="lead"><i class="fa-solid fa-envelope-open-text"></i></svelte:fragment>
+	</Tabs.Trigger>
+	<Tabs.Trigger class="flex-1" value={2}>
+		<i class="fa-solid fa-envelope-open-text"></i>
 		<span>{$_('tools.tab.submit')}</span>
-	</Tab>
+	</Tabs.Trigger>
 	<!-- ... -->
-</TabGroup>
+</Tabs.List>
 <!-- Charting -->
-{#if currentTab === 0}
+<Tabs.Content value={0}>
 	<div class="content">
 		<h1 class="mb-3">{$_('tools.charting.primary')}</h1>
-		<div class="w-full text-token grid grid-cols-2 md:grid-cols-2 gap-4">
+		<div class="w-full base-font-color grid grid-cols-2 md:grid-cols-2 gap-4">
 			<div class="card bg-initial card-hover overflow-hidden">
 				<header>
 					<lite-youtube width="100%" videoid="U0i-z-tpxY8" playlabel="Play: Keynote (Google I/O '18)"></lite-youtube>
@@ -65,8 +65,8 @@
 
 		{#if optk_OS === "Win"}	
 			<h2 class="my-3">{$_('tools.charting.peepo_dl')}</h2>
-			<div class="w-full text-token grid grid-cols-2 md:grid-cols-2 gap-4">	
-				<ToolCard 
+			<div class="w-full base-font-color grid grid-cols-2 md:grid-cols-2 gap-4">
+				<ToolCard
 					Url="https://drive.google.com/uc?export=download&id=1TQuvKo1tBZrXZIMlUMJ3-1vU1jfsxI2H"
 					ImageSrc={peepoSamyuuScreenshotUrl}
 					CardSubtitle={$_('tools.card.peepo_origin.subtitle')}
@@ -82,7 +82,7 @@
 		{/if}
 
 		<h1 class="my-3">{$_('tools.charting.additional')}</h1>
-		<div class="w-full text-token grid grid-cols-1 md:grid-cols-2 gap-4">
+		<div class="w-full base-font-color grid grid-cols-1 md:grid-cols-2 gap-4">
 			<ToolCard
 				Url="https://whmhammer.github.io/tja-tools/"
 				ImageSrc={tjatoolsScreenshotUrl}
@@ -101,11 +101,11 @@
 			{/if}
 		</div>
 	</div>
-{/if}
-{#if currentTab === 1}
+</Tabs.Content>
+<Tabs.Content value={1}>
 	<div class="content">
 		<h1 class="my-3">{$_('tools.lyrics.dl')}</h1>
-		<div class="w-full text-token grid grid-cols-1 md:grid-cols-2 gap-4">
+		<div class="w-full base-font-color grid grid-cols-1 md:grid-cols-2 gap-4">
 			<ToolCard
 				Url="https://github.com/SubtitleEdit/subtitleedit"
 				ImageSrc={subeditScreenshotUrl}
@@ -115,12 +115,12 @@
 			/>
 		</div>
 	</div>
-{/if}
+</Tabs.Content>
 <!-- Submit your content -->
-{#if currentTab === 2}
+<Tabs.Content value={2}>
 	<div class="content">
 		<h1 class="my-3">{$_('tools.submit.soundtrack')}</h1>
-		<div class="w-full text-token grid grid-cols-1 md:grid-cols-2 gap-4">
+		<div class="w-full base-font-color grid grid-cols-1 md:grid-cols-2 gap-4">
 			<ToolCard
 				Url="https://forms.gle/WXNUwjJyLdJoeRSM6"
 				ImageSrc={songSubmissionScreenshotUrl}
@@ -137,8 +137,11 @@
 			/>
 		</div>
 	</div>
-{/if}
+</Tabs.Content>
+</Tabs>
 
 <style>
-	.content {@apply card w-full bg-surface-100-800-token p-4;}
+	@reference "../../app.css";
+
+	.content {@apply card w-full bg-surface-100-900 p-4;}
 </style>

@@ -2,60 +2,60 @@
     import { onMount } from 'svelte';
     import { readTextFile, writeTextFile, mkdir } from '@tauri-apps/plugin-fs';
 
-    import { getContext } from 'svelte';
-    const { TriggerWarning, TriggerSuccess } = getContext('toast');
+    import { TriggerWarning, TriggerSuccess } from '$lib/utils/toast';
 
     import { GetPreferencesPath } from "$lib/utils/path.js";
 
     import { path } from '@tauri-apps/api';
 
-    import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
-    import { setModeCurrent } from '@skeletonlabs/skeleton';
-
+    import { SegmentedControl } from '@skeletonlabs/skeleton-svelte';
     import { _ , locale } from 'svelte-i18n';
     import { get } from 'svelte/store';
 
     // Debug mode code
-    let debugMode = false;
+    let debugMode = $state(false);
 
     const DisableDebugMode = async () => {
         TriggerSuccess(get(_)('themes.success.debug_disabled'));
         debugMode = false;
     }
 
-    let currentThemeModeDebug = 'dark';
+    let currentThemeModeDebug = $state('dark');
 
     const ThemeChangerDebug = async (e) => {
         const themevalue = e.target.value;
-        const themetarget = document.getElementById('themetarget');
-        const themedata = themetarget.getAttribute('data-theme');
-
+        const themedata = document.documentElement.getAttribute('data-theme');
         if (themedata == themevalue) {
             TriggerWarning(get(_)('themes.warn.same_theme_debug'));
         }
         else {
             currentTheme = themevalue;
-            document.body.dataset.theme = themevalue;
+            document.documentElement.setAttribute('data-theme', themevalue);
             console.log("DEBUG: theme has been changed")
         }
     }
 
     const ThemeModeChangerDebug = async (e) => {
         currentThemeModeDebug = e.target.value;
+        document.documentElement.setAttribute('data-mode', currentThemeModeDebug);
         if (currentThemeModeDebug === "dark") {
-            setModeCurrent(false);
             console.log("DEBUG: mode has been changed to dark")
         }
         else if (currentThemeModeDebug === "light") {
-            setModeCurrent(true);
             console.log("DEBUG: mode has been changed to light")
         }
     }
 
     // Theme code
-    export let currentTile = 0;
+    /**
+     * @typedef {Object} Props
+     * @property {number} [currentTile]
+     */
 
-    let currentTheme = 'skeleton';
+    /** @type {Props} */
+    let { currentTile = 0 } = $props();
+
+    let currentTheme = $state('skeleton');
 
     const TryFetchingCurrentTheme = async () => {
         const prefsDir = await GetPreferencesPath();
@@ -70,13 +70,12 @@
             currentTheme = 'skeleton';
             try { await writeTextFile(themeFilePath, JSON.stringify({ theme: currentTheme })); } catch {}
         }
-        document.body.dataset.theme = currentTheme;
+        document.documentElement.setAttribute('data-theme', currentTheme);
     }
 
     const ThemeChanger = async (e) => {
         const themevalue = e.target.value;
-        const themetarget = document.getElementById('themetarget');
-        const themedata = themetarget.getAttribute('data-theme');
+        const themedata = document.documentElement.getAttribute('data-theme');
 
         if (themedata == themevalue) {
             TriggerWarning(get(_)('themes.warn.same_theme'));
@@ -89,7 +88,7 @@
             await writeTextFile(theme_settings, JSON.stringify(json_theme));
 
             currentTheme = themevalue;
-            document.body.dataset.theme = themevalue;
+            document.documentElement.setAttribute('data-theme', themevalue);
             console.log("theme has been changed")
         }
     }
@@ -98,7 +97,7 @@
     const json_modelight = {"thememode":"light"};
     const json_modedark = {"thememode":"dark"};
 
-    let currentThemeMode = 'Loading...';
+    let currentThemeMode = $state('Loading...');
 
     const TryFetchingCurrentThemeMode = async () => {
         const prefsDir = await GetPreferencesPath();
@@ -114,12 +113,11 @@
             try { await writeTextFile(modeFilePath, JSON.stringify({ thememode: currentThemeMode })); } catch {}
         }
 
+        document.documentElement.setAttribute('data-mode', currentThemeMode);
         if (currentThemeMode === "dark") {
-            setModeCurrent(false);
             console.log("mode has been changed to dark")
         }
         else if (currentThemeMode === "light") {
-            setModeCurrent(true);
             console.log("mode has been changed to light")
         }
     }
@@ -129,16 +127,14 @@
         const prefsDir = await GetPreferencesPath();
         await mkdir(prefsDir, { recursive: true });
         const thememode_settings = await path.join(prefsDir, 'thememode.json');
+        currentThemeMode = e.value;
+        document.documentElement.setAttribute('data-mode', currentThemeMode);
         if (currentThemeMode === "dark") {
             await writeTextFile(thememode_settings, JSON.stringify(json_modedark));
-
-            setModeCurrent(false);
             console.log("mode has been changed to dark")
         }
         else if (currentThemeMode === "light") {
             await writeTextFile(thememode_settings, JSON.stringify(json_modelight));
-
-            setModeCurrent(true);
             console.log("mode has been changed to light")
         }
     }
@@ -167,7 +163,7 @@
                 <div class="p-4 space-y-4">
                     <h1>{debugMode ? $_('themes.title_debug') : $_('themes.title')}</h1>
                     <div class="flex gap-2">
-                        <select size="11" class="select w-full max-w-[265px]" value={currentTheme} on:change={debugMode ? ThemeChangerDebug : ThemeChanger} on:click={debugMode ? () => {} : TryFetchingCurrentTheme}>
+                        <select size="11" class="select w-full max-w-[265px]" value={currentTheme} onchange={debugMode ? ThemeChangerDebug : ThemeChanger} onclick={debugMode ? () => {} : TryFetchingCurrentTheme}>
                             <optgroup label={$_('themes.optgroup.optk')}>
                                 <option value="gleamingsky">Gleaming Sky</option>
                                 <option value="dashy">888</option>
@@ -178,7 +174,7 @@
                             </optgroup>
 
                             <optgroup label={$_('themes.optgroup.skeleton')}>
-                                <option value="skeleton">Legacy</option>
+                                <option value="legacy">Legacy</option>
                                 <option value="wintry">Wintry</option>
                                 <option value="modern">Modern</option>
                                 <option value="rocket">Rocket</option>
@@ -186,12 +182,12 @@
                                 <option value="vintage">Vintage</option>
                                 <option value="sahara">Sahara</option>
                                 <option value="hamlindigo">Hamlindigo</option>
-                                <option value="gold-nouveau">Gold Nouveau</option>
+                                <option value="nouveau">Nouveau</option>
                                 <option value="crimson">Crimson</option>
                             </optgroup>
                         </select>
 
-                        <div class="card w-full p-4 rounded-container-token">
+                        <div class="card w-full p-4 rounded-container">
                             <h1>{$_('themes.preview.title')}</h1>
 
                             <hr class="m-4">
@@ -201,9 +197,9 @@
                                 <div class="flex">
                                     <p class="flex gap-1 badge card p-2">
                                         <span>{$_('themes.preview.accents')}</span>
-                                        <span class="badge p-2 variant-filled-primary">{$_('themes.preview.accent_primary')}</span>
-                                        <span class="badge p-2 variant-filled-secondary">{$_('themes.preview.accent_secondary')}</span>
-                                        <span class="badge p-2 variant-filled-tertiary">{$_('themes.preview.accent_tertiary')}</span>
+                                        <span class="badge p-2 preset-filled-primary-500">{$_('themes.preview.accent_primary')}</span>
+                                        <span class="badge p-2 preset-filled-secondary-500">{$_('themes.preview.accent_secondary')}</span>
+                                        <span class="badge p-2 preset-filled-tertiary-500">{$_('themes.preview.accent_tertiary')}</span>
                                     </p>
                                 </div>
 
@@ -220,9 +216,9 @@
                                 <div class="flex">
                                     <p class="flex gap-1 badge card p-2">
                                         <span>{$_('themes.preview.notifs')}</span>
-                                        <span class="badge p-2 variant-filled-success">{$_('themes.preview.notif_success')}</span>
-                                        <span class="badge p-2 variant-filled-warning">{$_('themes.preview.notif_warning')}</span>
-                                        <span class="badge p-2 variant-filled-error">{$_('themes.preview.notif_error')}</span>
+                                        <span class="badge p-2 preset-filled-success-500">{$_('themes.preview.notif_success')}</span>
+                                        <span class="badge p-2 preset-filled-warning-500">{$_('themes.preview.notif_warning')}</span>
+                                        <span class="badge p-2 preset-filled-error-500">{$_('themes.preview.notif_error')}</span>
                                     </p>
                                 </div>
                             </div>
@@ -236,7 +232,7 @@
                             <hr class="m-4">
 
                             <h2>{$_('lang.label')}</h2>
-                            <select class="select w-full max-w-[200px]" bind:value={$locale} on:change={() => SaveLocale($locale)}>
+                            <select class="select w-full max-w-[200px]" bind:value={$locale} onchange={() => SaveLocale($locale)}>
                                 <option value="en">{$_('lang.en')}</option>
                                 <option value="ja">{$_('lang.ja')}</option>
                                 <option value="zh-Hans">{$_('lang.zh_Hans')}</option>
@@ -246,19 +242,28 @@
                     </div>
 
                     <div class={debugMode ? "flex gap-2" : ""}>
-                        <RadioGroup>
-                            <RadioItem group={debugMode ? currentThemeModeDebug : currentThemeMode} on:change={debugMode ? ThemeModeChangerDebug : ThemeModeChanger} name="justify" value={"dark"}><i class="fa-solid fa-moon"></i></RadioItem>
-                            <RadioItem group={debugMode ? currentThemeModeDebug : currentThemeMode} on:change={debugMode ? ThemeModeChangerDebug : ThemeModeChanger} name="justify" value={"light"}><i class="fa-solid fa-sun"></i></RadioItem>
+                        <SegmentedControl value={debugMode ? currentThemeModeDebug : currentThemeMode} onValueChange={debugMode ? ThemeModeChangerDebug : ThemeModeChanger} name="justify">
+                            <SegmentedControl.Control>
+                                <SegmentedControl.Indicator />
+                                <SegmentedControl.Item value={"dark"}>
+                                    <SegmentedControl.ItemText><i class="fa-solid fa-moon"></i></SegmentedControl.ItemText>
+                                    <SegmentedControl.ItemHiddenInput />
+                                </SegmentedControl.Item>
+                                <SegmentedControl.Item value={"light"}>
+                                    <SegmentedControl.ItemText><i class="fa-solid fa-sun"></i></SegmentedControl.ItemText>
+                                    <SegmentedControl.ItemHiddenInput />
+                                </SegmentedControl.Item>
 
-                            {#if (debugMode ? currentThemeModeDebug : currentThemeMode) === "dark"}
-                                <p class="flex items-center px-2">{$_('themes.mode.current', { values: { mode: $_('themes.mode.dark') } })}</p>
-                            {:else if (debugMode ? currentThemeModeDebug : currentThemeMode) === "light"}
-                                <p class="flex items-center px-2">{$_('themes.mode.current', { values: { mode: $_('themes.mode.light') } })}</p>
-                            {/if}
-                        </RadioGroup>
+                                {#if currentThemeMode === "dark"}
+                                    <p class="flex items-center px-2">{$_('themes.mode.current', { values: { mode: $_('themes.mode.dark') } })}</p>
+                                {:else if currentThemeMode === "light"}
+                                    <p class="flex items-center px-2">{$_('themes.mode.current', { values: { mode: $_('themes.mode.light') } })}</p>
+                                {/if}
+                            </SegmentedControl.Control>
+                        </SegmentedControl>
 
                         {#if debugMode}
-                            <button type="button" on:click={DisableDebugMode} class="button-red button-main"><i class="fa-solid fa-code"></i> {$_('themes.debug.disable_btn')}</button>
+                            <button type="button" onclick={DisableDebugMode} class="button-red button-main"><i class="fa-solid fa-code"></i> {$_('themes.debug.disable_btn')}</button>
                         {/if}
                     </div>
                 </div>
@@ -269,6 +274,8 @@
 {/if}
 
 <style>
+    @reference "../../app.css";
+
     /* Theme page CSS */
     option {text-align: center;}
 </style>

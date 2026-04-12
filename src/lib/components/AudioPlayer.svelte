@@ -1,10 +1,10 @@
 <script>
-    export let songInfo;
 	import { _ } from 'svelte-i18n';
+	let { songInfo } = $props();
 
-	let time = 0;
-	let duration = 0;
-	let paused = true;
+	let time = $state(0);
+	let duration = $state(0);
+	let paused = $state(true);
 
 	function format(time) {
 		if (isNaN(time)) return '...';
@@ -19,11 +19,11 @@
 <div class="player" class:paused>
 	<audio
 		src="https://github.com/OpenTaiko/OpenTaiko-Soundtrack/raw/refs/heads/main/{songInfo.chartAudioFilePath}"
-		bind:currentTime={time}
-		bind:duration
-		bind:paused
+		currentTime={time}
+		duration={duration}
+		paused={paused}
 		preload="none"
-		on:ended={() => {
+		onended={() => {
 			time = 0;
 		}}
 	></audio>
@@ -31,7 +31,7 @@
 	<button
 		class="play"
 		aria-label={paused ? $_('player.play') : $_('player.pause')}
-		on:click={() => paused = !paused}
+		onclick={() => paused = !paused}
 	></button>
 
 	<div class="info">
@@ -44,7 +44,7 @@
 			<span>{format(time)}</span>
 			<div
 				class="slider"
-				on:pointerdown={e => {
+				onpointerdown={e => {
 					const div = e.currentTarget;
 					
 					function seek(e) {
@@ -76,6 +76,8 @@
 </div>
 
 <style>
+	@reference "../../app.css";
+
 	.player {
 		display: grid;
 		grid-template-columns: 2.5em 1fr;

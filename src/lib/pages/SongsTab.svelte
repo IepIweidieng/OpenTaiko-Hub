@@ -1,13 +1,12 @@
 <script>
     // Dependencies
     import { onMount } from 'svelte';
-    import { ProgressBar } from '@skeletonlabs/skeleton';
+    import { Progress } from '@skeletonlabs/skeleton-svelte';
     import { readFile, readTextFile, mkdir, readDir, exists, copyFile, remove } from '@tauri-apps/plugin-fs';
     import { fetch } from "@tauri-apps/plugin-http";
     import { download } from "@tauri-apps/plugin-upload";
     import { path } from '@tauri-apps/api';
-    import { getContext } from 'svelte';
-    const { TriggerError, TriggerWarning, TriggerSuccess, backoffDownload } = getContext('toast');
+    import { TriggerError, TriggerWarning, TriggerSuccess, backoffDownload } from '$lib/utils/toast';
 
     import { md5 } from 'js-md5';
     import initSqlJs from 'sql.js';
@@ -24,15 +23,15 @@
 
     // Soundtrack
     const soundtrackInfoUrl = 'https://raw.githubusercontent.com/OpenTaiko/OpenTaiko-Soundtrack/main/soundtrack_info.json';
-    let soundtrackInfo = [];
-    let currentSongs = {};
-    let scanning = false;
-    let searchSong = "";
-    let searchGenre = "";
-    let songPreviousSort = "none";
-    let songDLProgress = {};
-    let songCountProgress = 0;
-    let songCountProgressBar = null;
+    let soundtrackInfo = $state([]);
+    let currentSongs = $state({});
+    let scanning = $state(false);
+    let searchSong = $state("");
+    let searchGenre = $state("");
+    let songPreviousSort = $state("none");
+    let songDLProgress = $state({});
+    let songCountProgress = $state(0);
+    let songCountProgressBar = $state(null);
 
     // Hall of Fame
     const hofDbUrl = 'https://opentaiko.github.io/hof.db3';
@@ -42,16 +41,16 @@
     const diffShortRevMap     = Object.fromEntries(diffShortMap.map((v, i) => [v, i]));
     const hofDiffShortMap     = (key) => diffShortMap[hofDifficultyRevMap[key]];
     const hofDiffShortRevMap  = (key) => hofDifficultyMap[diffShortRevMap[key]];
-    let hofDb = null;
+    let hofDb = $state(null);
     // uniqueId → { difficultyString → globalRank }
-    let hofMap = {};
+    let hofMap = $state({});
 
     // Modal state
-    let hofModalOpen = false;
-    let hofModalSongInfo = null;
-    let hofModalDifficulty = null;
-    let hofModalScores = [];
-    let hofModalMaxListPoints = 0;
+    let hofModalOpen = $state(false);
+    let hofModalSongInfo = $state(null);
+    let hofModalDifficulty = $state(null);
+    let hofModalScores = $state([]);
+    let hofModalMaxListPoints = $state(0);
 
     const ComputeMaxListPoints = (rank) => {
         return parseInt(1000 * Math.pow(0.95, rank - 1));
@@ -248,12 +247,12 @@
         }
     }
 
-    $: GetFilteredSInfo = (SInfo) => {
+    let GetFilteredSInfo = $derived((SInfo) => {
         const bInNameFilter = SInfo.chartTitle.toLowerCase().includes(searchSong.toLowerCase()) || SInfo.chartSubtitle?.toLowerCase().includes(searchSong.toLowerCase());
         const bInGenreFilter = SInfo.tjaGenreFolder.toLowerCase().includes(searchGenre.toLowerCase());
 
         return bInGenreFilter && bInNameFilter;
-    }
+    })
 
     const GetFilteredAvailableSInfo = (SInfo) => {
         const bNotUpToDate = !(Object.keys(currentSongs).includes(SInfo.uniqueId) && currentSongs[SInfo.uniqueId].chartMD5 === SInfo.tjaMD5);
@@ -465,8 +464,8 @@
 
     // Artists info
     const artistsDbUrl = 'https://opentaiko.github.io/artists_info.db3';
-    let songArtistsMap = {}; // songUid → { artists: ArtistObj[], link }
-    let expandedSongUid = null;
+    let songArtistsMap = $state({}); // songUid → { artists: ArtistObj[], link }
+    let expandedSongUid = $state(null);
 
     const updateArtistInfo = async () => {
         try {
@@ -510,28 +509,30 @@
 
 </script>
 
-<div class="table-container text-token">
-	<table class="table table-hover">
+<div class="table-container base-font-color">
+	<table class="table ">
 		<thead>
 			<tr>
-				<th><button on:click={() => SortSongsByColumn("name")}>{$_('songs.col.name')}</button></th>
-				<th><button on:click={() => SortSongsByColumn("genre")}>{$_('songs.col.folder')}</button></th>
+				<th><button onclick={() => SortSongsByColumn("name")}>{$_('songs.col.name')}</button></th>
+				<th><button onclick={() => SortSongsByColumn("genre")}>{$_('songs.col.folder')}</button></th>
 				<th colspan="5" class="w-1/5">{$_('songs.col.difficulties')}</th>
-				<th><button on:click={() => SortSongsByColumn("size")}>{$_('songs.col.size')}</button></th>
+				<th><button onclick={() => SortSongsByColumn("size")}>{$_('songs.col.size')}</button></th>
 				<th class="w-1/6">{$_('songs.col.status')}</th>
 			</tr>
 			<tr>
 				<th><input class="w-full rounded-md px-3 py-2 text-blue-950" placeholder={$_('songs.filter.song')} bind:value={searchSong}></th>
 				<th><input class="w-full rounded-md px-3 py-2 text-blue-950" placeholder={$_('songs.filter.folder')} bind:value={searchGenre}></th>
 				{#each diffShortMap as diff}
-					<th><button on:click={() => SortSongsByColumn(diff)}> {diff.toUpperCase()} </button></th>
+					<th><button onclick={() => SortSongsByColumn(diff)}>{diff.toUpperCase()}</button></th>
 				{/each}
 				<th></th>
 				<th>
 					{#if songCountProgressBar !== null}
-					<ProgressBar bind:value={songCountProgressBar} max={100} />
+					<Progress {songCountProgressBar} max={100}>
+						<Progress.Track><Progress.Range /></Progress.Track>
+					</Progress>
 					{:else}
-					<button type="button" on:click={DownloadDisplayedSongs} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('songs.button.bulk_download')}</button>
+					<button type="button" onclick={DownloadDisplayedSongs} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('songs.button.bulk_download')}</button>
 					{/if}
 				</th>
 			</tr>
@@ -542,8 +543,8 @@
 			<tr class:row-expanded={expandedSongUid === songInfo.uniqueId}>
 				<td>
 					<div class="flex items-center gap-2">
-						<button class="expand-btn" on:click={() => toggleExpand(songInfo.uniqueId)} aria-label="expand">
-							<i class="fa-solid fa-chevron-{expandedSongUid === songInfo.uniqueId ? 'down' : 'right'}"></i>
+						<button class="expand-btn" onclick={() => toggleExpand(songInfo.uniqueId)} aria-label="expand">
+							<i class="fa-solid {expandedSongUid === songInfo.uniqueId ? 'fa-chevron-down' : 'fa-chevron-right'}"></i>
 						</button>
 						<div class="flex-1"><AudioPlayer {songInfo} /></div>
 					</div>
@@ -575,9 +576,11 @@
 					<p>{$_('songs.status.not_downloaded')}</p>
 					<br />
 					{#if songDLProgress[songInfo.uniqueId] === undefined}
-					<button type="button" on:click={DownloadSong(songInfo, null)} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('songs.button.download')}</button>
+					<button type="button" onclick={DownloadSong(songInfo, null)} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('songs.button.download')}</button>
 					{:else}
-					<ProgressBar bind:value={songDLProgress[songInfo.uniqueId]} max={100} />
+					<Progress value={songDLProgress[songInfo.uniqueId]} max={100}>
+						<Progress.Track><Progress.Range /></Progress.Track>
+					</Progress>
 					{/if}
 				</td>
 				{:else if currentSongs[songInfo.uniqueId].chartMD5 === songInfo.tjaMD5}
@@ -585,9 +588,11 @@
 					<p>{$_('songs.status.up_to_date')}</p>
                     <br />
                     {#if songDLProgress[songInfo.uniqueId] === undefined}
-					<button type="button" on:click={DownloadSong(songInfo, currentSongs[songInfo.uniqueId])} class="button-gray button-main"><i class="fa-solid fa-download"></i> {$_('songs.button.redownload')}</button>
+					<button type="button" onclick={DownloadSong(songInfo, currentSongs[songInfo.uniqueId])} class="button-gray button-main"><i class="fa-solid fa-download"></i> {$_('songs.button.redownload')}</button>
 					{:else}
-					<ProgressBar bind:value={songDLProgress[songInfo.uniqueId]} max={100} />
+					<Progress value={songDLProgress[songInfo.uniqueId]} max={100}>
+						<Progress.Track><Progress.Range /></Progress.Track>
+					</Progress>
 					{/if}
 				</td>
 				{:else}
@@ -595,9 +600,11 @@
 					<p>{$_('songs.status.outdated')}</p>
 					<br />
 					{#if songDLProgress[songInfo.uniqueId] === undefined}
-					<button type="button" on:click={DownloadSong(songInfo, currentSongs[songInfo.uniqueId])} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('songs.button.update')}</button>
+					<button type="button" onclick={DownloadSong(songInfo, currentSongs[songInfo.uniqueId])} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('songs.button.update')}</button>
 					{:else}
-					<ProgressBar bind:value={songDLProgress[songInfo.uniqueId]} max={100} />
+					<Progress value={songDLProgress[songInfo.uniqueId]} max={100}>
+						<Progress.Track><Progress.Range /></Progress.Track>
+					</Progress>
 					{/if}
 				</td>
 				{/if}
@@ -652,13 +659,11 @@
 </div>
 
 {#if hofModalOpen && hofModalSongInfo}
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
-<div class="modal-backdrop" on:click={() => hofModalOpen = false}>
-    <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
-    <div class="card p-6 space-y-4 modal-card" on:click|stopPropagation>
+<div class="modal-backdrop" onclick={() => hofModalOpen = false}>
+    <div class="card p-6 space-y-4 modal-card" onclick={(ev) => { hofModalOpen = false; ev.stopPropagation(); }}>
         <div class="flex justify-between items-center">
             <h2 class="h3">Hall of Fame — {hofModalSongInfo.chartTitle} ({hofDiffShortMap(hofModalDifficulty).toUpperCase()} #{hofMap[hofModalSongInfo.uniqueId]?.[hofModalDifficulty]})</h2>
-            <button class="btn-icon btn-icon-sm variant-filled" on:click={() => hofModalOpen = false} aria-label={$_('hof.close')}>✕</button>
+            <button class="btn-icon btn-icon-sm variant-filled" onclick={() => hofModalOpen = false} aria-label={$_('hof.close')}>✕</button>
         </div>
         <div class="flex flex-col gap-1">
             <a href="https://opentaiko.github.io/songinfo/{hofModalSongInfo.uniqueId}?d={hofDifficultyRevMap[hofModalDifficulty]}" target="_blank" class="text-blue-600 underline">
@@ -670,7 +675,7 @@
             <p>{$_('hof.no_scores')}</p>
         {:else}
         <div class="table-container">
-            <table class="table table-hover">
+            <table class="table ">
                 <thead>
                     <tr>
                         <th>{$_('hof.col.rank')}</th>
@@ -715,6 +720,8 @@
 {/if}
 
 <style>
+    @reference "../../app.css";
+
     .modal-backdrop {
         position: fixed;
         inset: 0;

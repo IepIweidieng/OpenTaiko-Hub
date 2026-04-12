@@ -1,7 +1,7 @@
 <script>
     // Dependencies
     import { onMount } from 'svelte';
-    import { ProgressBar, TabGroup, Tab } from '@skeletonlabs/skeleton';
+    import { Progress, Tabs } from '@skeletonlabs/skeleton-svelte';
     import { readTextFile, mkdir, readDir, exists, copyFile, remove } from '@tauri-apps/plugin-fs';
     import { fetch } from "@tauri-apps/plugin-http";
     import { path } from '@tauri-apps/api';
@@ -31,8 +31,7 @@ for (const file of files) {
             }
         }
     }
-    import { getContext } from 'svelte';
-    const { TriggerError, TriggerWarning, TriggerSuccess, backoffDownload } = getContext('toast');
+    import { TriggerError, TriggerWarning, TriggerSuccess, backoffDownload } from '$lib/utils/toast';
 
     import { GetRootPath } from "$lib/utils/path.js";
     import { _ } from 'svelte-i18n';
@@ -42,38 +41,44 @@ for (const file of files) {
     import AssetStatusCell from '$lib/components/AssetStatusCell.svelte';
     import VersionNumberChip from '$lib/components/VersionNumberChip.svelte';
 
-    export let optk_version = "0.6.0.0";
+    /**
+     * @typedef {Object} Props
+     * @property {string} [optk_version]
+     */
+
+    /** @type {Props} */
+    let { optk_version = "0.6.0.0" } = $props();
     
 
-    let currentAsset = 0;
+    let currentAsset = $state(0);
 
     const assetsInfoUrl = 'https://raw.githubusercontent.com/OpenTaiko/OpenTaiko-Skins/main/assets_info.json';
-    let assetsInfo = {
+    let assetsInfo = $state({
         "Skins":[],
         "Characters":[],
         "Puchicharas":[]
-    };
-    let currentAssets = {
+    });
+    let currentAssets = $state({
         "Skins":{},
         "Characters":{},
         "Puchicharas":{}
-    };
-    let assetScanning = false;
-    let assetDLProgress = {
+    });
+    let assetScanning = $state(false);
+    let assetDLProgress = $state({
         "Skins":{},
         "Characters":{},
         "Puchicharas":{}
-    };
+    });
     let assetCountProgress = {
         "Skins":0,
         "Characters":0,
         "Puchicharas":0
     };
-    let assetCountProgressBar = {
+    let assetCountProgressBar = $state({
         "Skins":null,
         "Characters":null,
         "Puchicharas":null
-    };
+    });
 
 
     const updateAssetsInfo = async () => {
@@ -370,31 +375,32 @@ for (const file of files) {
 
 </script>
 
-<TabGroup 
+<Tabs {currentAsset} defaultValue={0} onValueChange={(details) => currentAsset = details.value}
 	justify="justify-center"
-	active="variant-filled-primary"
-	hover="hover:variant-soft-primary"
+	active="preset-filled-primary-500"
+	hover="hover:preset-tonal-primary"
 	flex="flex-1 lg:flex-none"
 	rounded=""
 	border=""
-	class="bg-surface-100-800-token w-full"
-	>
-	<Tab bind:group={currentAsset} name="tab1" value={0}>
-		<svelte:fragment slot="lead"><i class="fa-solid fa-palette"></i></svelte:fragment>
+	class="bg-surface-100-900 w-full"
+	><Tabs.List>
+	<Tabs.Trigger class="flex-1" value={0}>
+        <i class="fa-solid fa-palette"></i>
 		<span>{$_('assets.tab.skins')}</span>
-	</Tab>
-	<Tab bind:group={currentAsset} name="tab2" value={1}>
-		<svelte:fragment slot="lead"><i class="fa-solid fa-user"></i></svelte:fragment>
+	</Tabs.Trigger>
+	<Tabs.Trigger class="flex-1" value={1}>
+		<i class="fa-solid fa-user"></i>
 		<span>{$_('assets.tab.characters')}</span>
-	</Tab>
-	<Tab bind:group={currentAsset} name="tab3" value={2}>
-		<svelte:fragment slot="lead"><i class="fa-solid fa-circle-half-stroke"></i></svelte:fragment>
+	</Tabs.Trigger>
+	<Tabs.Trigger class="flex-1" value={2}>
+        <i class="fa-solid fa-circle-half-stroke"></i>
 		<span>{$_('assets.tab.puchicharas')}</span>
-	</Tab>
+	</Tabs.Trigger>
 	<!-- ... -->
-</TabGroup>
-<div class="table-container text-token">
-	<table class="table table-hover">
+	<Tabs.Indicator />
+</Tabs.List></Tabs>
+<div class="table-container base-font-color">
+	<table class="table ">
 		<thead>
 			<tr>
 				<th>{$_('assets.col.asset')}</th>
@@ -413,8 +419,11 @@ for (const file of files) {
 				<th>
 					{#if assetCountProgressBar[AssetTabType(currentAsset)] !== null}
 					<ProgressBar bind:value={assetCountProgressBar[AssetTabType(currentAsset)]} max={100} />
+					<Progress value={assetCountProgressBar[AssetTabType(currentAsset)]} max={100}>
+						<Progress.Track><Progress.Range /></Progress.Track>
+					</Progress>
 					{:else}
-					<button type="button" on:click={() => DownloadDisplayedAssets(AssetTabType(currentAsset))} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('assets.button.bulk_download')}</button>
+					<button type="button" onclick={() => DownloadDisplayedAssets(AssetTabType(currentAsset))} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('assets.button.bulk_download')}</button>
 					{/if}
 				</th>
 			</tr>
@@ -446,5 +455,5 @@ for (const file of files) {
 </div>
 
 <style>
-
+    @reference "../../app.css";
 </style>

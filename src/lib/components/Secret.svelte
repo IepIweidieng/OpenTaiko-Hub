@@ -42,7 +42,7 @@
 
 <div class="content">
     <div class="collection">
-        <form onsubmit="event.preventDefault(); fetchSecret();">
+        <form onsubmit={(event) => { event.preventDefault(); fetchSecret(); }}>
             <input type="text" id="secret" name="secret">
         </form>
     <div style="width:fit-content;margin:auto;">
@@ -73,6 +73,8 @@
 </div>
 
 <style>
+    @reference "../../app.css";
+
     form {
         border-width: 1px;
         border-color: #888888;

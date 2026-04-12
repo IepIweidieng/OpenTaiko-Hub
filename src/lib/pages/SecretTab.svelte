@@ -6,6 +6,6 @@
 <Secret/>
 
 <style>
-
+    @reference "../../app.css";
 
 </style>

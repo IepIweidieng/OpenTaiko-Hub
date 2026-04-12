@@ -1,70 +1,93 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-@import "@fontsource/quicksand";
-@import "@fontsource/space-grotesk";
-@import "@fontsource/abril-fatface";
-@import "@fontsource/playfair-display";
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-mode=dark], [data-mode=dark] *));
+
+@import '@skeletonlabs/skeleton';
+@import '@skeletonlabs/skeleton-svelte';
+
+@import '@fontsource/quicksand';
+@import '@fontsource/space-grotesk';
+@import '@fontsource/abril-fatface';
+@import '@fontsource/playfair-display';
+
+/* OpenTaiko Hub themes */
+@import './themes/gleamingsky.css';
+@import './themes/dashy.css';
+@import './themes/deceiver.css';
+@import './themes/onyx.css';
+@import './themes/pearl.css';
+@import './themes/optkkun.css';
+
+/* Skeleton preset themes */
+@import '@skeletonlabs/skeleton/themes/legacy';
+@import '@skeletonlabs/skeleton/themes/crimson';
+@import '@skeletonlabs/skeleton/themes/nouveau';
+@import '@skeletonlabs/skeleton/themes/hamlindigo';
+@import '@skeletonlabs/skeleton/themes/modern';
+@import '@skeletonlabs/skeleton/themes/rocket';
+@import '@skeletonlabs/skeleton/themes/sahara';
+@import '@skeletonlabs/skeleton/themes/seafoam';
+@import '@skeletonlabs/skeleton/themes/vintage';
+@import '@skeletonlabs/skeleton/themes/wintry';
 
 @layer base {
-    h1 {@apply h1 text-2xl font-bold mb-2;}
-    h2 {@apply h2 text-xl font-bold mb-2;}
-    h3 {@apply h3 text-lg font-bold mb-2;}
-    h4 {@apply h4 font-bold;}
-    h5 {@apply h5 font-bold;}
-    h6 {@apply h6 font-bold;}
+    h1 {@apply text-2xl font-bold mb-2;}
+    h2 {@apply text-xl font-bold mb-2;}
+    h3 {@apply text-lg font-bold mb-2;}
+    h4 {@apply font-bold;}
+    h5 {@apply font-bold;}
+    h6 {@apply font-bold;}
     ul {@apply list-disc list-inside ml-5;}
     ol {@apply list-decimal list-inside ml-5;}
     li {@apply mb-2;}
     a {@apply underline;}
-    hr {@apply border-token;}
+    hr {@apply border;}
 }
 
 /* Text */
 a {@apply text-primary-800 dark:text-primary-300;}
-.fetch-error {@apply text-red-800 dark:text-red-300 !important;}
+.fetch-error {@apply text-red-800! dark:text-red-300!;}
 .smalltext {font-size: 12px;}
 
 /* Buttons */
 .button-main {@apply font-medium rounded-lg text-sm px-3 py-1;}
-.button-blue {@apply bg-blue-600 text-neutral-200 !important;}
-.button-green {@apply bg-green-600 text-neutral-200 !important;}
-.button-gray {@apply bg-gray-600 text-neutral-200 !important;}
-.button-red {@apply bg-red-600 text-neutral-200 !important;}
+.button-blue {@apply bg-blue-600! text-neutral-200!;}
+.button-green {@apply bg-green-600! text-neutral-200!;}
+.button-gray {@apply bg-gray-600! text-neutral-200!;}
+.button-red {@apply bg-red-600! text-neutral-200!;}
 /* Button hover */
-.button-blue:hover {@apply bg-blue-700 text-neutral-200 !important;}
-.button-green:hover {@apply bg-green-700 text-neutral-200 !important;}
-.button-gray:hover {@apply bg-gray-700 text-neutral-200 !important;}
-.button-red:hover {@apply bg-red-700 text-neutral-200 !important;}
+.button-blue:hover {@apply bg-blue-700! text-neutral-200!;}
+.button-green:hover {@apply bg-green-700! text-neutral-200!;}
+.button-gray:hover {@apply bg-gray-700! text-neutral-200!;}
+.button-red:hover {@apply bg-red-700! text-neutral-200!;}
 
 /* Song tab */
-button.play {@apply bg-primary-500 !important;}
-button.play:hover {@apply bg-primary-400 !important;}
-button.play:active {@apply bg-primary-600 !important;}
-.slider {@apply bg-primary-800 !important;}
-.progress {@apply bg-primary-500 !important;}
+button.play {@apply bg-primary-500!;}
+button.play:hover {@apply bg-primary-400!;}
+button.play:active {@apply bg-primary-600!;}
+.slider {@apply bg-primary-800!;}
+.progress {@apply bg-primary-500!;}
 
 .time span {
 	font-size: 0.7em;
-    @apply text-black dark:text-white !important;
+    @apply text-black! dark:text-white!;
 }
 
 ::placeholder {
-    @apply text-stone-400 !important;
+    @apply text-stone-400!;
 }
 
-/* OpenTaiko Hub themes */
-[data-theme='gleamingsky'] {
+[data-theme='gleamingsky'] body {
     /* Buttons */
-    .button-blue {@apply bg-blue-500 text-black !important;}
-    .button-green {@apply bg-green-500 text-black !important;}
-    .button-gray {@apply bg-indigo-800 text-neutral-200 !important;}
-    .button-red {@apply bg-red-400 text-black !important;}
+    .button-blue {@apply bg-blue-500! text-black!;}
+    .button-green {@apply bg-green-500! text-black!;}
+    .button-gray {@apply bg-indigo-800! text-neutral-200!;}
+    .button-red {@apply bg-red-400! text-black!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-blue-600 text-black !important;}
-    .button-green:hover {@apply bg-green-600 text-black !important;}
-    .button-gray:hover {@apply bg-indigo-900 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-red-500 text-black !important;}
+    .button-blue:hover {@apply bg-blue-600! text-black!;}
+    .button-green:hover {@apply bg-green-600! text-black!;}
+    .button-gray:hover {@apply bg-indigo-900! text-neutral-200!;}
+    .button-red:hover {@apply bg-red-500! text-black!;}
 
     /* Background */
     background-color:rgb(255, 255, 255) !important;
@@ -82,17 +105,17 @@ button.play:active {@apply bg-primary-600 !important;}
     background-size: cover;
 }
 
-[data-theme='dashy'] {
+[data-theme='dashy'] body {
     /* Buttons */
-    .button-blue {@apply bg-blue-500 text-black !important;}
-    .button-green {@apply bg-lime-800 text-neutral-200 !important;}
-    .button-gray {@apply bg-blue-900 text-neutral-200 !important;}
-    .button-red {@apply bg-red-700 text-neutral-200 !important;}
+    .button-blue {@apply bg-blue-500! text-black!;}
+    .button-green {@apply bg-lime-800! text-neutral-200!;}
+    .button-gray {@apply bg-blue-900! text-neutral-200!;}
+    .button-red {@apply bg-red-700! text-neutral-200!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-blue-600 text-black !important;}
-    .button-green:hover {@apply bg-lime-900 text-neutral-200 !important;}
-    .button-gray:hover {@apply bg-blue-950 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-red-800 text-neutral-200 !important;}
+    .button-blue:hover {@apply bg-blue-600! text-black!;}
+    .button-green:hover {@apply bg-lime-900! text-neutral-200!;}
+    .button-gray:hover {@apply bg-blue-950! text-neutral-200!;}
+    .button-red:hover {@apply bg-red-800! text-neutral-200!;}
 
     /* Background */
     background-color:rgb(185, 185, 185) !important;
@@ -110,20 +133,20 @@ button.play:active {@apply bg-primary-600 !important;}
     background-size: cover;
 
     /* Other stuff */
-    hr {@apply border-token dark:border-surface-700;} 
+    hr {@apply border dark:border-surface-700;} 
 }
 
-[data-theme='deceiver'] {
+[data-theme='deceiver'] body {
     /* Buttons */
-    .button-blue {@apply bg-neutral-400 text-black !important;}
-    .button-green {@apply bg-green-800 text-neutral-200 !important;}
-    .button-gray {@apply bg-neutral-700 text-neutral-200 !important;}
-    .button-red {@apply bg-red-800 text-neutral-200 !important;}
+    .button-blue {@apply bg-neutral-400! text-black!;}
+    .button-green {@apply bg-green-800! text-neutral-200!;}
+    .button-gray {@apply bg-neutral-700! text-neutral-200!;}
+    .button-red {@apply bg-red-800! text-neutral-200!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-neutral-500 text-black !important;}
-    .button-green:hover {@apply bg-green-900 text-neutral-200 !important;}
-    .button-gray:hover {@apply bg-neutral-800 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-red-900 text-neutral-200 !important;}
+    .button-blue:hover {@apply bg-neutral-500! text-black!;}
+    .button-green:hover {@apply bg-green-900! text-neutral-200!;}
+    .button-gray:hover {@apply bg-neutral-800! text-neutral-200!;}
+    .button-red:hover {@apply bg-red-900! text-neutral-200!;}
 
     /* Background */
     background-color:rgb(136, 0, 0) !important;
@@ -141,17 +164,17 @@ button.play:active {@apply bg-primary-600 !important;}
     background-size: cover;
 }
 
-[data-theme='onyx'] {
+[data-theme='onyx'] body {
     /* Buttons */
-    .button-blue {@apply bg-zinc-100 text-black !important;}
-    .button-green {@apply bg-emerald-300 text-black !important;}
-    .button-gray {@apply bg-zinc-700 text-neutral-200 !important;}
-    .button-red {@apply bg-red-400 text-black !important;}
+    .button-blue {@apply bg-zinc-100! text-black!;}
+    .button-green {@apply bg-emerald-300! text-black!;}
+    .button-gray {@apply bg-zinc-700! text-neutral-200!;}
+    .button-red {@apply bg-red-400! text-black!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-zinc-200 text-black !important;}
-    .button-green:hover {@apply bg-emerald-400 text-black !important;}
-    .button-gray:hover {@apply bg-zinc-800 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-red-500 text-black !important;}
+    .button-blue:hover {@apply bg-zinc-200! text-black!;}
+    .button-green:hover {@apply bg-emerald-400! text-black!;}
+    .button-gray:hover {@apply bg-zinc-800! text-neutral-200!;}
+    .button-red:hover {@apply bg-red-500! text-black!;}
 
     /* Background */
     background-color:rgb(0, 0, 0) !important;
@@ -169,17 +192,17 @@ button.play:active {@apply bg-primary-600 !important;}
     background-size: cover;
 }
 
-[data-theme='pearl'] {
+[data-theme='pearl'] body {
     /* Buttons */
-    .button-blue {@apply bg-gray-400 text-black !important;}
-    .button-green {@apply bg-green-800 text-neutral-200 !important;}
-    .button-gray {@apply bg-gray-700 text-neutral-200 !important;}
-    .button-red {@apply bg-red-800 text-neutral-200 !important;}
+    .button-blue {@apply bg-gray-400! text-black!;}
+    .button-green {@apply bg-green-800! text-neutral-200!;}
+    .button-gray {@apply bg-gray-700! text-neutral-200!;}
+    .button-red {@apply bg-red-800! text-neutral-200!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-gray-500 text-black !important;}
-    .button-green:hover {@apply bg-green-900 text-neutral-200 !important;}
-    .button-gray:hover {@apply bg-gray-800 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-red-900 text-neutral-200 !important;}
+    .button-blue:hover {@apply bg-gray-500! text-black!;}
+    .button-green:hover {@apply bg-green-900! text-neutral-200!;}
+    .button-gray:hover {@apply bg-gray-800! text-neutral-200!;}
+    .button-red:hover {@apply bg-red-900! text-neutral-200!;}
 
     /* Background */
     background-color:rgb(155, 155, 155) !important;
@@ -197,20 +220,20 @@ button.play:active {@apply bg-primary-600 !important;}
     background-size: cover;
 
     /* Other stuff */
-    hr {@apply border-token dark:border-surface-700;} 
+    hr {@apply border dark:border-surface-700;} 
 }
 
-[data-theme='optkkun'] {
+[data-theme='optkkun'] body {
     /* Buttons */
-    .button-blue {@apply bg-blue-400 text-black !important;}
-    .button-green {@apply bg-emerald-400 text-black !important;}
-    .button-gray {@apply bg-gray-600 text-neutral-200 !important;}
-    .button-red {@apply bg-red-700 text-neutral-200 !important;}
+    .button-blue {@apply bg-blue-400! text-black!;}
+    .button-green {@apply bg-emerald-400! text-black!;}
+    .button-gray {@apply bg-gray-600! text-neutral-200!;}
+    .button-red {@apply bg-red-700! text-neutral-200!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-blue-500 text-black !important;}
-    .button-green:hover {@apply bg-emerald-500 text-black !important;}
-    .button-gray:hover {@apply bg-gray-700 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-red-800 text-neutral-200 !important;}
+    .button-blue:hover {@apply bg-blue-500! text-black!;}
+    .button-green:hover {@apply bg-emerald-500! text-black!;}
+    .button-gray:hover {@apply bg-gray-700! text-neutral-200!;}
+    .button-red:hover {@apply bg-red-800! text-neutral-200!;}
 
     /* Background */
     background-color:rgb(10, 32, 82) !important;
@@ -228,146 +251,145 @@ button.play:active {@apply bg-primary-600 !important;}
     background-size: cover;
 }
 
-/* Skeleton preset themes */
-[data-theme='skeleton'] {
+[data-theme='legacy'] body {
     /* Buttons */
-    .button-blue {@apply bg-secondary-500 text-neutral-200 !important;}
-    .button-green {@apply bg-primary-500 text-black !important;}
-    .button-gray {@apply bg-gray-600 text-neutral-200 !important;}
-    .button-red {@apply bg-red-700 text-neutral-200 !important;}
+    .button-blue {@apply bg-secondary-500! text-neutral-200!;}
+    .button-green {@apply bg-primary-500! text-black!;}
+    .button-gray {@apply bg-gray-600! text-neutral-200!;}
+    .button-red {@apply bg-red-700! text-neutral-200!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-secondary-600 text-neutral-200 !important;}
-    .button-green:hover {@apply bg-primary-600 text-black !important;}
-    .button-gray:hover {@apply bg-gray-700 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-red-800 text-neutral-200 !important;}
+    .button-blue:hover {@apply bg-secondary-600! text-neutral-200!;}
+    .button-green:hover {@apply bg-primary-600! text-black!;}
+    .button-gray:hover {@apply bg-gray-700! text-neutral-200!;}
+    .button-red:hover {@apply bg-red-800! text-neutral-200!;}
 }
 
-[data-theme='crimson'] {
+[data-theme='crimson'] body {
     /* Buttons */
-    .button-blue {@apply bg-secondary-400 text-black !important;}
-    .button-green {@apply bg-emerald-500 text-black !important;}
-    .button-gray {@apply bg-tertiary-500 text-black !important;}
-    .button-red {@apply bg-error-500 text-black !important;}
+    .button-blue {@apply bg-secondary-400! text-black!;}
+    .button-green {@apply bg-emerald-500! text-black!;}
+    .button-gray {@apply bg-tertiary-500! text-black!;}
+    .button-red {@apply bg-error-500! text-black!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-secondary-500 text-black !important;}
-    .button-green:hover {@apply bg-emerald-600 text-black !important;}
-    .button-gray:hover {@apply bg-tertiary-600 text-black !important;}
-    .button-red:hover {@apply bg-error-600 text-black !important;}
+    .button-blue:hover {@apply bg-secondary-500! text-black!;}
+    .button-green:hover {@apply bg-emerald-600! text-black!;}
+    .button-gray:hover {@apply bg-tertiary-600! text-black!;}
+    .button-red:hover {@apply bg-error-600! text-black!;}
 }
 
-[data-theme='gold-nouveau'] {
+[data-theme='nouveau'] body {
     h1, h2, h3, h4, h5, h6 {font-family: 'Quicksand', sans-serif !important;}
 
     /* Buttons */
-    .button-blue {@apply bg-primary-500 text-neutral-200 dark:text-black !important;}
-    .button-green {@apply bg-secondary-400 text-black !important;}
-    .button-gray {@apply bg-neutral-600 text-neutral-200 !important;}
-    .button-red {@apply bg-error-500 text-neutral-200 !important;}
+    .button-blue {@apply bg-primary-500! text-neutral-200! dark:text-black!;}
+    .button-green {@apply bg-secondary-400! text-black!;}
+    .button-gray {@apply bg-neutral-600! text-neutral-200!;}
+    .button-red {@apply bg-error-500! text-neutral-200!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-primary-600 text-neutral-200 dark:text-black !important;}
-    .button-green:hover {@apply bg-secondary-500 text-black !important;}
-    .button-gray:hover {@apply bg-neutral-700 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-error-600 text-neutral-200 !important;}
+    .button-blue:hover {@apply bg-primary-600! text-neutral-200! dark:text-black!;}
+    .button-green:hover {@apply bg-secondary-500! text-black!;}
+    .button-gray:hover {@apply bg-neutral-700! text-neutral-200!;}
+    .button-red:hover {@apply bg-error-600! text-neutral-200!;}
 }
 
-[data-theme='hamlindigo'] {
+[data-theme='hamlindigo'] body {
     h1, h2, h3, h4, h5, h6 {font-family: serif !important;}
 
     /* Buttons */
-    .button-blue {@apply bg-primary-500 text-black !important;}
-    .button-green {@apply bg-success-700 text-neutral-200 !important;}
-    .button-gray {@apply bg-neutral-600 text-neutral-200 !important;}
-    .button-red {@apply bg-error-700 text-neutral-200 !important;}
+    .button-blue {@apply bg-primary-500! text-black!;}
+    .button-green {@apply bg-success-700! text-neutral-200!;}
+    .button-gray {@apply bg-neutral-600! text-neutral-200!;}
+    .button-red {@apply bg-error-700! text-neutral-200!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-primary-600 text-black !important;}
-    .button-green:hover {@apply bg-success-800 text-neutral-200 !important;}
-    .button-gray:hover {@apply bg-neutral-700 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-error-800 text-neutral-200 !important;}
+    .button-blue:hover {@apply bg-primary-600! text-black!;}
+    .button-green:hover {@apply bg-success-800! text-neutral-200!;}
+    .button-gray:hover {@apply bg-neutral-700! text-neutral-200!;}
+    .button-red:hover {@apply bg-error-800! text-neutral-200!;}
 }
 
-[data-theme='modern'] {
+[data-theme='modern'] body {
     body {font-family: 'Quicksand', sans-serif !important;}
 
     /* Buttons */
-    .button-main {@apply font-bold !important;}
-    .button-blue {@apply bg-secondary-500 text-black !important;}
-    .button-green {@apply bg-success-500 text-black !important;}
-    .button-gray {@apply bg-zinc-600 text-neutral-200 !important;}
-    .button-red {@apply bg-error-500 text-black !important;}
+    .button-main {@apply font-bold!;}
+    .button-blue {@apply bg-secondary-500! text-black!;}
+    .button-green {@apply bg-success-500! text-black!;}
+    .button-gray {@apply bg-zinc-600! text-neutral-200!;}
+    .button-red {@apply bg-error-500! text-black!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-secondary-600 text-black !important;}
-    .button-green:hover {@apply bg-success-600 text-black !important;}
-    .button-gray:hover {@apply bg-zinc-700 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-error-600 text-black !important;}
+    .button-blue:hover {@apply bg-secondary-600! text-black!;}
+    .button-green:hover {@apply bg-success-600! text-black!;}
+    .button-gray:hover {@apply bg-zinc-700! text-neutral-200!;}
+    .button-red:hover {@apply bg-error-600! text-black!;}
 }
 
-[data-theme='rocket'] {
+[data-theme='rocket'] body {
     h1, h2, h3, h4, h5, h6 {font-family: 'Space Grotesk', sans-serif !important;}
 
     /* Buttons */
-    .button-blue {@apply bg-primary-500 text-black !important;}
-    .button-green {@apply bg-success-500 text-black !important;}
-    .button-gray {@apply bg-sky-900 text-neutral-200 !important;}
-    .button-red {@apply bg-error-500 text-neutral-200 !important;}
+    .button-blue {@apply bg-primary-500! text-black!;}
+    .button-green {@apply bg-success-500! text-black!;}
+    .button-gray {@apply bg-sky-900! text-neutral-200!;}
+    .button-red {@apply bg-error-500! text-neutral-200!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-primary-600 text-black !important;}
-    .button-green:hover {@apply bg-success-600 text-black !important;}
-    .button-gray:hover {@apply bg-sky-950 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-error-600 text-neutral-200 !important;}
+    .button-blue:hover {@apply bg-primary-600! text-black!;}
+    .button-green:hover {@apply bg-success-600! text-black!;}
+    .button-gray:hover {@apply bg-sky-950! text-neutral-200!;}
+    .button-red:hover {@apply bg-error-600! text-neutral-200!;}
 }
 
-[data-theme='sahara'] {
+[data-theme='sahara'] body {
     /* Buttons */
-    .button-blue {@apply bg-primary-500 text-black !important;}
-    .button-green {@apply bg-success-500 text-black !important;}
-    .button-gray {@apply bg-orange-800 text-neutral-200 !important;}
-    .button-red {@apply bg-error-500 text-black !important;}
+    .button-blue {@apply bg-primary-500! text-black!;}
+    .button-green {@apply bg-success-500! text-black!;}
+    .button-gray {@apply bg-orange-800! text-neutral-200!;}
+    .button-red {@apply bg-error-500! text-black!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-primary-600 text-black !important;}
-    .button-green:hover {@apply bg-success-600 text-black !important;}
-    .button-gray:hover {@apply bg-orange-900 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-error-600 text-black !important;}
+    .button-blue:hover {@apply bg-primary-600! text-black!;}
+    .button-green:hover {@apply bg-success-600! text-black!;}
+    .button-gray:hover {@apply bg-orange-900! text-neutral-200!;}
+    .button-red:hover {@apply bg-error-600! text-black!;}
 }
 
-[data-theme='seafoam'] {
+[data-theme='seafoam'] body {
     h1, h2, h3, h4, h5, h6 {font-family: 'Playfair Display', sans-serif !important;}
 
     /* Buttons */
-    .button-blue {@apply bg-primary-500 text-black !important;}
-    .button-green {@apply bg-success-500 text-black !important;}
-    .button-gray {@apply bg-secondary-500 text-neutral-200 !important;}
-    .button-red {@apply bg-error-400 text-black !important;}
+    .button-blue {@apply bg-primary-500! text-black!;}
+    .button-green {@apply bg-success-500! text-black!;}
+    .button-gray {@apply bg-secondary-500! text-neutral-200!;}
+    .button-red {@apply bg-error-400! text-black!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-primary-600 text-black !important;}
-    .button-green:hover {@apply bg-success-600 text-black !important;}
-    .button-gray:hover {@apply bg-secondary-600 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-error-500 text-black !important;}
+    .button-blue:hover {@apply bg-primary-600! text-black!;}
+    .button-green:hover {@apply bg-success-600! text-black!;}
+    .button-gray:hover {@apply bg-secondary-600! text-neutral-200!;}
+    .button-red:hover {@apply bg-error-500! text-black!;}
 }
 
-[data-theme='vintage'] {
+[data-theme='vintage'] body {
     h1, h2, h3, h4, h5, h6 {font-family: 'Abril Fatface', sans-serif !important;}
 
     /* Buttons */
-    .button-blue {@apply bg-primary-500 text-black !important;}
-    .button-green {@apply bg-success-500 text-black !important;}
-    .button-gray {@apply bg-amber-900 text-neutral-200 !important;}
-    .button-red {@apply bg-error-500 text-black !important;}
+    .button-blue {@apply bg-primary-500! text-black!;}
+    .button-green {@apply bg-success-500! text-black!;}
+    .button-gray {@apply bg-amber-900! text-neutral-200!;}
+    .button-red {@apply bg-error-500! text-black!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-primary-600 text-black !important;}
-    .button-green:hover {@apply bg-success-600 text-black !important;}
-    .button-gray:hover {@apply bg-amber-950 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-error-600 text-black !important;}
+    .button-blue:hover {@apply bg-primary-600! text-black!;}
+    .button-green:hover {@apply bg-success-600! text-black!;}
+    .button-gray:hover {@apply bg-amber-950! text-neutral-200!;}
+    .button-red:hover {@apply bg-error-600! text-black!;}
 }
 
-[data-theme='wintry'] {
+[data-theme='wintry'] body {
     /* Buttons */
-    .button-blue {@apply bg-primary-500 text-black !important;}
-    .button-green {@apply bg-success-500 text-black !important;}
-    .button-gray {@apply bg-cyan-900 text-neutral-200 !important;}
-    .button-red {@apply bg-error-400 text-black !important;}
+    .button-blue {@apply bg-primary-500! text-black!;}
+    .button-green {@apply bg-success-500! text-black!;}
+    .button-gray {@apply bg-cyan-900! text-neutral-200!;}
+    .button-red {@apply bg-error-400! text-black!;}
     /* Button hover */
-    .button-blue:hover {@apply bg-primary-600 text-black !important;}
-    .button-green:hover {@apply bg-success-600 text-black !important;}
-    .button-gray:hover {@apply bg-cyan-950 text-neutral-200 !important;}
-    .button-red:hover {@apply bg-error-500 text-black !important;}
+    .button-blue:hover {@apply bg-primary-600! text-black!;}
+    .button-green:hover {@apply bg-success-600! text-black!;}
+    .button-gray:hover {@apply bg-cyan-950! text-neutral-200!;}
+    .button-red:hover {@apply bg-error-500! text-black!;}
 }

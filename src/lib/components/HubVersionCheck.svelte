@@ -3,14 +3,13 @@
     import { getVersion } from '@tauri-apps/api/app';
     import { fetch } from "@tauri-apps/plugin-http";
 
-    import { getContext } from 'svelte';
-    const { TriggerError, TriggerWarning } = getContext('toast');
+    import { TriggerError, TriggerWarning } from '$lib/utils/toast';
 
     import { _ } from 'svelte-i18n';
     import { get } from 'svelte/store';
 
     // Version Number
-    let VersionHub = "Loading..."
+    let VersionHub = $state("Loading...")
 
     async function getHubVersion() {
         const appVersion = await getVersion();
@@ -21,8 +20,8 @@
     // Check version number
     const repoOwner = 'OpenTaiko';//'OpenTaiko';
     const repoName = 'OpenTaiko-Hub';//OpenTaiko-Dev-Mirror';
-    let latestVersion = 'Loading...';
-    let latestVersionErrorFound = false;
+    let latestVersion = $state('Loading...');
+    let latestVersionErrorFound = $state(false);
 
 
     const TryFetchingLatestVersion = async () => {
@@ -63,12 +62,12 @@
             {#if latestVersionErrorFound === true}
                 <span>{$_('hub.status.fetch_failed')}</span>
                 <span class="fetch-error"><b>{$_('common.fetch_error')}</b></span>
-                <button type="button" on:click={TryFetchingLatestVersion} class="button-red button-main"><i class="fa-solid fa-triangle-exclamation"></i> {$_('common.retry')}</button>
+                <button type="button" onclick={TryFetchingLatestVersion} class="button-red button-main"><i class="fa-solid fa-triangle-exclamation"></i> {$_('common.retry')}</button>
             {:else if latestVersion === "Loading..."}
                 <span>{$_('hub.status.checking')}</span>
             {:else if VersionHub != latestVersion}
                 <span><b>{$_('hub.status.outdated')}</b></span>
-                <button type="button" on:click={UpdateHub} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('hub.button.update', { values: { version: latestVersion.slice(1) } })}</button>
+                <button type="button" onclick={UpdateHub} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('hub.button.update', { values: { version: latestVersion.slice(1) } })}</button>
             {:else}
                 <span><b>{$_('hub.status.up_to_date')}</b></span>
             {/if}
@@ -79,6 +78,8 @@
 <div class="card p-4 hubversionnumber">OpenTaiko Hub ({VersionHub})</div>
 
 <style>
+    @reference "../../app.css";
+
     .hubversionnumber {
         font-weight: bold;
         position: fixed;

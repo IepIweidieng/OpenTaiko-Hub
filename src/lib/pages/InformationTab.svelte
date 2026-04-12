@@ -1,22 +1,21 @@
 <script>
     // Dependencies
     import { onMount } from 'svelte';
-    import { TabGroup, Tab } from '@skeletonlabs/skeleton';
-    import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
+    import { Tabs, Accordion } from '@skeletonlabs/skeleton-svelte';
     import { fetch } from "@tauri-apps/plugin-http";
     import { marked } from 'marked';
     import { _ } from 'svelte-i18n';
     import { get } from 'svelte/store';
 
-    let currentInfo = 0;
+    let currentInfo = $state(0);
 
     // Information
     const changelogUrl = 'https://raw.githubusercontent.com/0auBSQ/OpenTaiko/main/CHANGELOG.md';
-    let changelogContent = '';
+    let changelogContent = $state('');
     const hubChangelogUrl = 'https://raw.githubusercontent.com/OpenTaiko/OpenTaiko-Hub/main/CHANGELOG.md';
-    let hubChangelogContent = '';
+    let hubChangelogContent = $state('');
     const creditsUrl = 'https://raw.githubusercontent.com/OpenTaiko/OpenTaiko-Hub/main/CREDITS.md';
-    let creditsContent = '';
+    let creditsContent = $state('');
 
     const renderer = new marked.Renderer();
     renderer.link = function(href, title, text) {
@@ -79,45 +78,50 @@
 
 </script>
 
-<TabGroup
+<Tabs {currentInfo} defaultValue={0} onValueChange={(details) => currentInfo = details.value}
 	justify="justify-center"
-	active="variant-filled-primary"
-	hover="hover:variant-soft-primary"
+	active="preset-filled-primary-500"
+	hover="hover:preset-tonal-primary"
 	flex="flex-1 lg:flex-none"
 	rounded=""
 	border=""
-	class="bg-surface-100-800-token w-full"
-	>
-	<Tab bind:group={currentInfo} name="tab1" value={0}>
-		<svelte:fragment slot="lead"><i class="fa-regular fa-file-lines"></i></svelte:fragment>
+	class="bg-surface-100-900 w-full"
+	><Tabs.List>
+	<Tabs.Trigger class="flex-1" value={0}>
+        <i class="fa-regular fa-file-lines"></i>
 		<span>{$_('info.tab.changelog_game')}</span>
-	</Tab>
-	<Tab bind:group={currentInfo} name="tab2" value={1}>
-		<svelte:fragment slot="lead"><i class="fa-regular fa-file-lines"></i></svelte:fragment>
+	</Tabs.Trigger>
+	<Tabs.Trigger class="flex-1" value={1}>
+        <i class="fa-regular fa-file-lines"></i>
 		<span>{$_('info.tab.changelog_hub')}</span>
-	</Tab>
-	<Tab bind:group={currentInfo} name="tab3" value={2}>
-		<svelte:fragment slot="lead"><i class="fa-regular fa-file-lines"></i></svelte:fragment>
+	</Tabs.Trigger>
+	<Tabs.Trigger class="flex-1" value={2}>
+        <i class="fa-regular fa-file-lines"></i>
 		<span>{$_('info.tab.documentation')}</span>
-	</Tab>
-	<Tab bind:group={currentInfo} name="tab4" value={3}>
-		<svelte:fragment slot="lead"><i class="fa-regular fa-file-lines"></i></svelte:fragment>
+	</Tabs.Trigger>
+	<Tabs.Trigger class="flex-1" value={3}>
+        <i class="fa-regular fa-file-lines"></i>
 		<span>{$_('info.tab.troubleshooting')}</span>
-	</Tab>
-	<Tab bind:group={currentInfo} name="tab5" value={4}>
-		<svelte:fragment slot="lead"><i class="fa-regular fa-file-lines"></i></svelte:fragment>
+	</Tabs.Trigger>
+	<Tabs.Trigger class="flex-1" value={4}>
+        <i class="fa-regular fa-file-lines"></i>
 		<span>{$_('info.tab.credits')}</span>
-	</Tab>
+	</Tabs.Trigger>
 	<!-- ... -->
-</TabGroup>
-
+</Tabs.List>
+{#each [0, 1] as info}
+<Tabs.Content value={info}>
 <!-- OpenTaiko Changelogs or OpenTaiko Hub Changelogs -->
-{#if currentInfo === 0 || currentInfo === 1}
     <div class="content">
-        <Accordion class="card rounded-container-token">
-            <AccordionItem>
-                <svelte:fragment slot="summary"><b>{$_('info.legend.title')}</b></svelte:fragment>
-                <svelte:fragment slot="content">
+        <Accordion collapsible class="card rounded-container">
+            <Accordion.Item>
+                <Accordion.ItemTrigger class="font-bold flex items-center justify-between gap-2">
+                    {$_('info.legend.title')}
+                    <Accordion.ItemIndicator class="group">
+                        <i class="fa-solid fa-chevron-down h-5 w-5 transition group-data-[state=open]:rotate-180"></i>
+                    </Accordion.ItemIndicator>
+                </Accordion.ItemTrigger>
+                <Accordion.ItemContent>
                     <h2><b>[Feat]</b></h2>
                     <p>{$_('info.legend.feat')}</p>
 
@@ -134,31 +138,32 @@
                     <h2><b>[i18n]</b></h2>
                     <p>{$_('info.legend.i18n')}</p>
 
-                    {#if currentInfo === 1}
+                    {#if info === 1}
                         <h2><b>[Theme]</b></h2>
                         <p>{$_('info.legend.theme')}</p>
                     {/if}
-                </svelte:fragment>
-            </AccordionItem>
+                </Accordion.ItemContent>
+            </Accordion.Item>
         </Accordion>
 
         <hr class="my-3">
 
-        {#if currentInfo === 0}
+        {#if info === 0}
             {@html changelogContent}
-        {:else if currentInfo === 1}
+        {:else if info === 1}
             {@html hubChangelogContent}
         {/if}
     </div>
-{/if}
+</Tabs.Content>
+{/each}
 
 <!-- Documentation -->
-{#if currentInfo === 2}
+<Tabs.Content value={2}>
     <iframe src="https://opentaiko.github.io/OpTk-Documentation/" title={$_('info.tab.documentation')} width="100%"  style="background-color:white;height:calc(100% - 100px)"></iframe>
-{/if}
+</Tabs.Content>
 
 <!-- Troubleshooting -->
-{#if currentInfo === 3}
+<Tabs.Content value={3}>
     <div class="content">
         <h1>{$_('info.troubleshoot.title')}</h1>
         <p>{$_('info.troubleshoot.intro')}</p>
@@ -176,15 +181,18 @@
         <p>{$_('info.versioning.example')}</p>
         <p>{$_('info.versioning.wip')}</p>
     </div>
-{/if}
+</Tabs.Content>
 
 <!-- Credits -->
-{#if currentInfo === 4}
+<Tabs.Content value={4}>
     <div class="content">
         {@html creditsContent}
     </div>
-{/if}
+</Tabs.Content>
+</Tabs>
 
 <style>
-    .content {@apply card w-full bg-surface-100-800-token p-4;}
+    @reference "../../app.css";
+
+    .content {@apply card w-full bg-surface-100-900 p-4;}
 </style>

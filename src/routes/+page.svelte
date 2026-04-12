@@ -1,12 +1,11 @@
 <script>
     import { onMount } from 'svelte';
-    import { AppRail, AppRailTile, AppRailAnchor, ProgressBar } from '@skeletonlabs/skeleton';
+    import { Navigation, Progress } from '@skeletonlabs/skeleton-svelte';
     import { readTextFile, writeTextFile, mkdir, readDir, exists, copyFile, remove } from '@tauri-apps/plugin-fs';
     import { fetch } from "@tauri-apps/plugin-http";
     import { openPath } from '@tauri-apps/plugin-opener';
 
-    import { getContext } from 'svelte';
-    const { TriggerError, TriggerWarning, TriggerSuccess, backoffDownload } = getContext('toast');
+    import { TriggerError, TriggerWarning, TriggerSuccess, backoffDownload } from '$lib/utils/toast';
     import { GetOS } from '$lib/utils/path.js';
 
     import { GetRootPath } from "../lib/utils/path.js";
@@ -32,23 +31,20 @@
     // Images
     import optkLogoUrl from '$lib/optk.png';
 
-    // Themes
-    const themetarget = document.getElementById('themetarget');
-
     // Navigation
-    let currentTile = 0;
+    let currentTile = $state(0);
     
     // OpTk Version
     const repoOwner = '0AuBSQ';//'OpenTaiko'; 
     const repoName = 'OpenTaiko';//OpenTaiko-Dev-Mirror'; 
-    let optk_version = '0.1.0.0';
-    let optk_OS = 'Win';
-    let buildDetails = 'Loading...';
-    let latestVersion = 'Loading...';
-    let buildDetailsNotFound = false;
-    let latestVersionErrorFound = false;
-    let progress = 0;
-    let downloadBusy = false;
+    let optk_version = $state('0.1.0.0');
+    let optk_OS = $state('Win');
+    let buildDetails = $state('Loading...');
+    let latestVersion = $state('Loading...');
+    let buildDetailsNotFound = $state(false);
+    let latestVersionErrorFound = $state(false);
+    let progress = $state(0);
+    let downloadBusy = $state(false);
 
     const LaunchOpenTaiko = async () => {
         try {
@@ -268,7 +264,7 @@
         await TryFetchingCurrentVersion();
         await TryFetchingLatestVersion();
 
-        themetarget.setAttribute("style", "");
+        document.body.setAttribute("style", "");
     });
 </script>
 
@@ -277,50 +273,50 @@
     <div class="grid grid-cols-1 md:grid-cols-[auto_1fr]">
       <!-- Left Sidebar. -->
       <aside class="bg-yellow-500">
-        <AppRail height="h-full w-[72px]">
-            <!-- <svelte:fragment slot="lead">
-                <AppRailAnchor href="/" >(icon)</AppRailAnchor>
-            </svelte:fragment> -->
-            <!-- --- -->
-            <AppRailTile bind:group={currentTile} name="tile-1" value={0} title={$_('nav.tooltip.home')}>
-                <svelte:fragment slot="lead"><i class="fa-solid fa-home"></i></svelte:fragment>
-                <span>{$_('nav.home')}</span>
-            </AppRailTile>
-            <AppRailTile bind:group={currentTile} name="tile-2" value={1} title={$_('nav.tooltip.songlist')}>
-                <svelte:fragment slot="lead"><i class="fa-solid fa-music"></i></svelte:fragment>
-                <span>{$_('nav.songlist')}</span>
-            </AppRailTile>
-            <AppRailTile bind:group={currentTile} name="tile-3" value={2} title={$_('nav.tooltip.skins')}>
-                <svelte:fragment slot="lead"><i class="fa-solid fa-pen-ruler"></i></svelte:fragment>
-                <span>{$_('nav.skins')}</span>
-            </AppRailTile>
-            <AppRailTile bind:group={currentTile} name="tile-4" value={3} title={$_('nav.tooltip.tools')}>
-                <svelte:fragment slot="lead"><i class="fa-solid fa-screwdriver-wrench"></i></svelte:fragment>
-                <span>{$_('nav.tools')}</span>
-            </AppRailTile>
-            <AppRailTile bind:group={currentTile} name="tile-5" value={4} title={$_('nav.tooltip.secrets')}>
-                <svelte:fragment slot="lead"><i class="fa-solid fa-question"></i></svelte:fragment>
-                <span>{$_('nav.secrets')}</span>
-            </AppRailTile>
-            <!-- Trail -->
-            <svelte:fragment slot="trail">
-                <AppRailTile bind:group={currentTile} name="tile-6" value={5} title={$_('nav.tooltip.information')}>
-                    <svelte:fragment slot="lead"><i class="fa-regular fa-file-lines"></i></svelte:fragment>
-                    <span>{$_('nav.information')}</span>
-                </AppRailTile>
-                <AppRailTile bind:group={currentTile} name="tile-7" value={6} title={$_('nav.tooltip.links')}>
-                    <svelte:fragment slot="lead"><i class="fa-solid fa-globe"></i></svelte:fragment>
-                    <span>{$_('nav.links')}</span>
-                </AppRailTile>
-                <AppRailTile bind:group={currentTile} name="tile-8" value={7} title={$_('nav.tooltip.themes')}>
-                    <svelte:fragment slot="lead"><i class="fa-solid fa-palette"></i></svelte:fragment>
-                    <span>{$_('nav.themes')}</span>
-                </AppRailTile>
-				<AppRailAnchor href="https://github.com/OpenTaiko/OpenTaiko-Hub" target="_blank" title={$_('nav.tooltip.github')} class="sidebaricon">
-					<i class="fa-brands fa-github text-2xl text-black dark:text-white"></i>
-				</AppRailAnchor>
-			</svelte:fragment>
-        </AppRail>
+        <Navigation layout="rail" height="h-full w-[72px]">
+            <!-- Navigation.Header>
+                <Navigation.TriggerAnchor href="/" >(icon)</Navigation.TriggerAnchor>
+            </Navigation.Header -->
+            <Navigation.Content><Navigation.Menu>
+            <Navigation.Trigger group={currentTile} value={0} onclick={() => (currentTile = 0)} title={$_('nav.tooltip.home')}>
+                <i class="fa-solid fa-home"></i>
+                <Navigation.TriggerText>{$_('nav.home')}</Navigation.TriggerText>
+            </Navigation.Trigger>
+            <Navigation.Trigger group={currentTile} value={1} onclick={() => (currentTile = 1)} title={$_('nav.tooltip.songlist')}>
+                <i class="fa-solid fa-music"></i>
+                <Navigation.TriggerText>{$_('nav.songlist')}</Navigation.TriggerText>
+            </Navigation.Trigger>
+            <Navigation.Trigger group={currentTile} value={2} onclick={() => (currentTile = 2)} title={$_('nav.tooltip.skins')}>
+                <i class="fa-solid fa-pen-ruler"></i>
+                <Navigation.TriggerText>{$_('nav.skins')}</Navigation.TriggerText>
+            </Navigation.Trigger>
+            <Navigation.Trigger group={currentTile} value={3} onclick={() => (currentTile = 3)} title={$_('nav.tooltip.tools')}>
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                <Navigation.TriggerText>{$_('nav.tools')}</Navigation.TriggerText>
+            </Navigation.Trigger>
+            <Navigation.Trigger group={currentTile} value={4} onclick={() => (currentTile = 4)} title={$_('nav.tooltip.secrets')}>
+                <i class="fa-solid fa-question"></i>
+                <Navigation.TriggerText>{$_('nav.secrets')}</Navigation.TriggerText>
+            </Navigation.Trigger>
+            </Navigation.Menu></Navigation.Content>
+            <Navigation.Footer><Navigation.Menu>
+                <Navigation.Trigger group={currentTile} value={5} onclick={() => (currentTile = 5)} title={$_('nav.tooltip.information')}>
+                    <i class="fa-regular fa-file-lines"></i>
+                    <Navigation.TriggerText>{$_('nav.information')}</Navigation.TriggerText>
+                </Navigation.Trigger>
+                <Navigation.Trigger group={currentTile} value={6} onclick={() => (currentTile = 6)} title={$_('nav.tooltip.links')}>
+                    <i class="fa-solid fa-globe"></i>
+                    <Navigation.TriggerText>{$_('nav.links')}</Navigation.TriggerText>
+                </Navigation.Trigger>
+                <Navigation.Trigger group={currentTile} value={7} onclick={() => (currentTile = 7)} title={$_('nav.tooltip.themes')}>
+                    <i class="fa-solid fa-palette"></i>
+                    <Navigation.TriggerText>{$_('nav.themes')}</Navigation.TriggerText>
+                </Navigation.Trigger>
+                <Navigation.TriggerAnchor href="https://github.com/OpenTaiko/OpenTaiko-Hub" target="_blank" title={$_('nav.tooltip.github')} class="sidebaricon">
+                    <i class="fa-brands fa-github text-2xl text-black dark:text-white"></i>
+                </Navigation.TriggerAnchor>
+            </Navigation.Menu></Navigation.Footer>
+        </Navigation>
       </aside>
       <!-- Main Content -->
       <main class="h-screen space-y-4 p-4">
@@ -333,25 +329,27 @@
                     <div class="flex gap-4">
                         <span class="nowrap"><b>{$_('home.label.current_version')}</b></span>
                         {#if buildDetails === "Loading..."}
-                            <div class="placeholder animate-pulse flex-1" />
+                            <div class="placeholder animate-pulse flex-1"></div>
                         {:else}
                             {#if downloadBusy === true}
-                                <div class="progressbar"><ProgressBar bind:value={progress} max={100} /></div>
+                                <div class="progressbar"><Progress {progress} max={100}>
+                                    <Progress.Track><Progress.Range /></Progress.Track>
+                                </Progress></div>
                             {:else}
                                 <span>{buildDetails}</span>
-                                <button type="button" on:click={TryFetchingCurrentVersion} class="button-blue button-main"><i class="fa-solid fa-rotate"></i> {$_('home.button.reload')}</button>
+                                <button type="button" onclick={TryFetchingCurrentVersion} class="button-blue button-main"><i class="fa-solid fa-rotate"></i> {$_('home.button.reload')}</button>
                                 {#if buildDetailsNotFound === true}
-                                    <button type="button" on:click={DownloadOpenTaiko} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('home.button.download')}</button>
+                                    <button type="button" onclick={DownloadOpenTaiko} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('home.button.download')}</button>
                                 {:else}
-                                    <button type="button" on:click={LaunchOpenTaiko} class="button-blue button-main"><i class="fa-solid fa-rocket"></i> {$_('home.button.launch')}</button>
-                                    <button type="button" on:click={OpenInExplorer} class="button-blue button-main"><i class="fa-solid fa-folder-open"></i> {$_('home.button.explorer')}</button>
+                                    <button type="button" onclick={LaunchOpenTaiko} class="button-blue button-main"><i class="fa-solid fa-rocket"></i> {$_('home.button.launch')}</button>
+                                    <button type="button" onclick={OpenInExplorer} class="button-blue button-main"><i class="fa-solid fa-folder-open"></i> {$_('home.button.explorer')}</button>
                                     {#if latestVersion !== optk_version && 'Loading...' !== latestVersion}
-                                        <button type="button" on:click={DownloadOpenTaiko} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('home.button.update')}</button>
+                                        <button type="button" onclick={DownloadOpenTaiko} class="button-green button-main"><i class="fa-solid fa-download"></i> {$_('home.button.update')}</button>
                                         {#if checkSkinCompatibility(latestVersion, optk_version) === false}
                                             <span class="text-red-500">{$_('home.warn.skin_update')}</span>
                                         {/if}
                                     {:else}
-                                        <button type="button" on:click={DownloadOpenTaiko} class="button-gray button-main"><i class="fa-solid fa-download"></i> {$_('home.button.redownload')}</button>
+                                        <button type="button" onclick={DownloadOpenTaiko} class="button-gray button-main"><i class="fa-solid fa-download"></i> {$_('home.button.redownload')}</button>
                                     {/if}
                                 {/if}
                             {/if}
@@ -364,12 +362,12 @@
                         <span class="nowrap"><b>{$_('home.label.latest_version')}</b></span>
                         {#if latestVersionErrorFound === true}
                             <span class="fetch-error"><b>{$_('common.fetch_error')}</b></span>
-                            <button type="button" on:click={TryFetchingLatestVersion} class="button-red button-main"><i class="fa-solid fa-triangle-exclamation"></i> {$_('home.button.retry')}</button>
+                            <button type="button" onclick={TryFetchingLatestVersion} class="button-red button-main"><i class="fa-solid fa-triangle-exclamation"></i> {$_('home.button.retry')}</button>
                         {:else if latestVersion === "Loading..."}
-                            <div class="placeholder animate-pulse flex-1" />
+                            <div class="placeholder animate-pulse flex-1"></div>
                         {:else}
                             <span>{latestVersion}</span>
-                            <button type="button" on:click={TryFetchingLatestVersion} class="button-blue button-main"><i class="fa-solid fa-rotate"></i> {$_('common.reload')}</button>
+                            <button type="button" onclick={TryFetchingLatestVersion} class="button-blue button-main"><i class="fa-solid fa-rotate"></i> {$_('common.reload')}</button>
                         {/if}
                     </div>
                 </div>
@@ -396,7 +394,7 @@
         <!-- Skins -->
         <div class="w-full h-full" style:display={currentTile === 2 ? null : 'none'}>
             <AssetsTab
-                bind:optk_version
+                optk_version={optk_version}
             />
         </div>
         
@@ -422,13 +420,15 @@
 
         <!-- OpTk Hub Themes -->
         <ThemesTab
-            bind:currentTile
+            currentTile={currentTile}
         />
       </main>    
     </div>
 </div>
 
 <style>
+    @reference "../app.css";
+
     /* Main CSS */
     main {overflow-y: auto;}
     .nowrap {white-space: nowrap;}
