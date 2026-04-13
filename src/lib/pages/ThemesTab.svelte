@@ -254,8 +254,6 @@
                                 <p class="flex items-center px-2">{$_('themes.mode.current', { values: { mode: $_('themes.mode.dark') } })}</p>
                             {:else if (debugMode ? currentThemeModeDebug : currentThemeMode) === "light"}
                                 <p class="flex items-center px-2">{$_('themes.mode.current', { values: { mode: $_('themes.mode.light') } })}</p>
-                            {:else}
-                                <p class="flex items-center px-2">{$_('themes.mode.current', { values: { mode: (debugMode ? currentThemeModeDebug : currentThemeMode) } })}</p>
                             {/if}
                         </RadioGroup>
 
